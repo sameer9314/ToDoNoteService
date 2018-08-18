@@ -3,7 +3,13 @@
 spring:
   application:
     name: ToDo-Microservice-NoteService
-
+  cloud:
+    config:
+      uri: http://localhost:8888
+      profile: prod 
+  profiles:
+    active:
+    - prod
 # Discovery Server Access
 eureka:
     client:

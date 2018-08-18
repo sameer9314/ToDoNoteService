@@ -105,8 +105,6 @@ public class NoteController {
 	@PostMapping(value = "/getnotes")
 	public ResponseEntity<Response> getNotes(HttpServletRequest req) {
 		logger.info(REQ_IN +messages.get("159"));
-		System.out.println("In Notes user Id = "+req.getHeader("userId"));
-		System.out.println("userId = "+req.getHeader("userId"));
 		
 		response.setMessage(noteService.getNotes(req.getHeader("userId").toString()).toString());
 		response.setStatus(200);
@@ -338,7 +336,7 @@ public class NoteController {
 	 */
 	@ApiOperation(value = "Remove Note")
 	@DeleteMapping(value = "/removenote/{id}")
-	public ResponseEntity<Response> removeNote(HttpServletRequest req, @PathVariable("id") String id) throws Exception {
+	public ResponseEntity<Response> removeNote(HttpServletRequest req, @PathVariable String id) throws Exception {
 		logger.info(REQ_IN + messages.get("153") );
 		
 		noteService.removeNote(req.getHeader("userId").toString(), id);
@@ -437,22 +435,40 @@ public class NoteController {
 	 * @param noteId
 	 * @return
 	 */
-	@ApiOperation(value="View Trashed Notes")
-	@PostMapping(value="/viewtrashednotes")
-	public ResponseEntity<Response>  viewTrash(HttpServletRequest req,@RequestParam String noteId) {
+	@ApiOperation(value="View Trashed Notes List")
+	@PostMapping(value="/viewtrashednoteslist")
+	public ResponseEntity<Response>  viewTrashList(HttpServletRequest req,@RequestParam String noteId) {
 		logger.info(REQ_IN + messages.get("158"));
 		
-		Preconditions.checkNotNull(req.getAttribute("userId").toString(), "Token Is Null");
+		Preconditions.checkNotNull(req.getHeader("userId").toString(), "Token Is Null");
 		Preconditions.checkNotNull(noteId, "Note Id Is Null");
 		
-		response.setMessage(noteService.viewTrash(req.getHeader("userId").toString(),noteId).toString());
+		response.setMessage(noteService.viewTrashList(req.getHeader("userId").toString(),noteId).toString());
 		response.setStatus(200);
 		
 		logger.info(RES_OUT + messages.get("158"));
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
+	
+	@ApiOperation(value="Get Notes Sorted By Name")
+	@GetMapping(value="/sortnotesbyname")
+	public ResponseEntity<?> sortByName(HttpServletRequest req){
+		System.out.println("asdakjdkajshdaksjhd");
+		Preconditions.checkNotNull(req.getHeader("userId").toString(), "Token Is Null");
+		System.out.println("user id : "+req.getHeader("userId").toString());
+		return new ResponseEntity<>(noteService.sortByName(req.getHeader("userId").toString()),HttpStatus.OK);
+	}
+	
+	@ApiOperation(value="Get Notes Sorted By Date")
+	@GetMapping(value="/sortnotesbydate")
+	public ResponseEntity<?> sortByCreatedDate(HttpServletRequest req){
+		System.out.println("asdakjdkajshdaksjhd");
+		Preconditions.checkNotNull(req.getHeader("userId").toString(), "Token Is Null");
+		System.out.println("user id : "+req.getHeader("userId").toString());
+		return new ResponseEntity<>(noteService.sortByCreatedDate(req.getHeader("userId").toString()),HttpStatus.OK);
+	}
 											/* Rest Template */
-		  @GetMapping("/message{name}")
+		 /* @GetMapping("/message{name}")
 		  public String getMessage(@PathVariable String name) {
 
 			ResponseEntity<String> responseEntity = new RestTemplate().getForEntity("http://localhost:9700/user/send_message",
@@ -462,7 +478,7 @@ public class NoteController {
 		    System.out.println(response+" "+name);
 		    return response+" "+ name;
 		  }
-		  									/* Feign Client */
+		  									 Feign Client 
 		  @Autowired
 		  private UserServiceProxy proxy;
 
@@ -472,5 +488,5 @@ public class NoteController {
 		    String fullName = proxy.getMessage()+" "+name;
 
 		    return fullName;
-		  }
+		  }*/
 }

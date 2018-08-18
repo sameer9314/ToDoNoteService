@@ -15,7 +15,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 @EnableEurekaClient
 @SpringBootApplication
 @RibbonClient(name="note-service")
-@EnableFeignClients("com.bridgelabz")
+//@EnableFeignClients("com.bridgelabz")
 public class ToDoNoteServiceApplication {
 
 	public static void main(String[] args) {

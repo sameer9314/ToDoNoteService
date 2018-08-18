@@ -11,11 +11,8 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger.web.ApiKeyVehicle;
 import springfox.documentation.swagger.web.SecurityConfiguration;
-//import springfox.documentation.swagger.web.ApiKeyVehicle;
-//import springfox.documentation.swagger.web.SecurityConfiguration;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import static springfox.documentation.builders.PathSelectors.regex;
-import static com.google.common.base.Predicates.or;
 
 /**
  * Purpose : To provide implementation for the swagger configuration.
@@ -40,9 +37,10 @@ public class SwaggerConfig {
 		return (regex("/.*"));
 	}
 
+	@SuppressWarnings("deprecation")
 	private ApiInfo apiInfo() {
 		return new ApiInfoBuilder().title("ToDo Api").description("ToDo Application API reference for developers")
-				.termsOfServiceUrl("http://javainuse.com").contact("sameersaurabh9314@gmail.com").license("Sameer License")
+				.termsOfServiceUrl("http://to_do.com").contact("sameersaurabh9314@gmail.com").license("Sameer License")
 				.licenseUrl("sameersaurabh9314@gmail.com").version("1.0").build();
 	}
 	

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -153,7 +154,6 @@ public class NoteServiceImpl implements NoteService {
 				foundDescriptions.add(splittedString);
 			}
 		}
-		
 		description.setDescription(foundDescriptions);
 		description.setLink(foundLinks);
 		return description;
@@ -208,11 +208,14 @@ public class NoteServiceImpl implements NoteService {
 		//List<Notes> notes = noteRepository.findByUserId(userId);
 		List<Notes> notes = noteElasticRepository.findByUserId(userId);
 		List<Notes> listNotes = new ArrayList<>();
-		for (Notes n : notes) {
+		/*for (Notes n : notes) {
 			if (n.isArchive()==true) {
 				listNotes.add(n);
 			}
-		}
+		}*/
+		
+		notes.stream().filter(streamNote->(streamNote.isArchive()==true)).forEach(noteFilter->listNotes.add(noteFilter));
+		
 		return listNotes;
 	}
 
@@ -228,9 +231,11 @@ public class NoteServiceImpl implements NoteService {
 		//List<Label> labels = labelRepository.findByUserId(userId);
 		List<Label> labels = labelElasticRepository.findByUserId(userId);
 		List<String> labelName = new ArrayList<>();
-		for (Label label : labels) {
+		/*for (Label label : labels) {
 			labelName.add(label.getLabelName());
-		}
+		}*/
+		
+		labels.stream().forEach(foundLabel->labelName.add(foundLabel.getLabelName()));
 		return labelName;
 	}
 
@@ -283,12 +288,15 @@ public class NoteServiceImpl implements NoteService {
 		
 		// Checking label is already present on note .
 		List<Label> foundLabels = foundNote.getLabel();
-		for (Label foundLabel : foundLabels) {
+		
+		/*for (Label foundLabel : foundLabels) {
 			if (foundLabel.getLabelName().equals(newLabel.getLabelName())) {
 				throw new Exception(
 						messages.get("170") + newLabel.getLabelName());
 			}
-		}
+		}*/
+		Preconditions.checkNotNull(foundLabels.stream().filter(foundLabel->foundLabel.getLabelName().equals(newLabel.getLabelName())).collect(Collectors.toList()),
+				messages.get("170")+newLabel.getLabelName());
 		
 		newLabel.setId(sequenceDao.getNextSequenceId(HOSTING_SEQ_KEY));
 		newLabel.setUserId(userId);
@@ -329,11 +337,12 @@ public class NoteServiceImpl implements NoteService {
 
 		for (Notes note : notes) {
 			List<Label> labels = note.getLabel();
-			for (Label label : labels) {
+			/*for (Label label : labels) {
 				if (label.getLabelName().equals(labelName)) {
 					foundNotes.add(note);
 				}
-			}
+			}*/
+			labels.stream().filter(streamLabel->streamLabel.getLabelName().equals(labelName)).forEach(label->foundNotes.add(note));
 		}
 		return foundNotes;
 	}
@@ -578,15 +587,15 @@ public class NoteServiceImpl implements NoteService {
 				.checkNotNull(noteElasticRepository.findByUserId(userId), 
 						messages.get("167"));
 		List<Notes> foundNotes=new ArrayList<>();
-		for(Notes note : notes) {
+		/*for(Notes note : notes) {
 			if(note.isTrash()==true) {
 				foundNotes.add(note);
 			}
-		}
-		
+		}*/
+		notes.stream().filter(streamNote->streamNote.isTrash()==true).forEach(forEachNote->foundNotes.add(forEachNote));
 		return foundNotes;
 	}
-	
+
 	/**
 	 * To set the pinned status to true or false for the particular noteId if note archived status is false.
 	 * 
@@ -615,10 +624,9 @@ public class NoteServiceImpl implements NoteService {
 			noteRepository.save(note);
 			return note.toString() +" is Pinned";
 		}
-		
 		return "Archived Note Cannot Be Pinned";
 	}
-	
+
 	/**
 	 * To set the pinned status to true or false for the particular noteId if note archived status is false.
 	 * 
@@ -657,7 +665,7 @@ public class NoteServiceImpl implements NoteService {
 	 * @return List<Notes>
 	 */
 	@Override
-	public List<Notes> viewTrash(String userId, String noteId){
+	public List<String> viewTrashList(String userId, String noteId){
 		Preconditions.checkNotNull(userId,messages.get("168"));
 		Preconditions.checkNotNull(noteId,messages.get("169"));
 		
@@ -665,13 +673,29 @@ public class NoteServiceImpl implements NoteService {
 				.checkNotNull(noteRepository.findByUserId(userId), messages.get("167"));*/
 		List<Notes> notes = Preconditions
 				.checkNotNull(noteElasticRepository.findByUserId(userId), messages.get("167"));
-		List<Notes> trashedNotes=new ArrayList<>();
+		List<String> trashedNotesList=new ArrayList<>();
 		
-		for(Notes note:notes) {
+		/*for(Notes note:notes) {
 			if(note.isTrash()==true) {
-				trashedNotes.add(note);
+				trashedNotesList.add(note.getTitle());
 			}
-		}
-		return trashedNotes;
+		}*/
+		notes.stream().filter(streamNote->streamNote.isTrash()==true).forEach(note->trashedNotesList.add(note.getTitle()));
+		return trashedNotesList;
 	}
+
+	@Override
+	public List<Notes> sortByName(String userId) {
+		List<Notes> notes = Preconditions
+				.checkNotNull(noteElasticRepository.findByUserId(userId), messages.get("167"));
+		return notes.stream().sorted((x,y)->x.getTitle().compareTo(y.getTitle())).collect(Collectors.toList());
+	}
+
+	@Override
+	public List<Notes> sortByCreatedDate(String userId) {
+		List<Notes> notes = Preconditions
+				.checkNotNull(noteElasticRepository.findByUserId(userId), messages.get("167"));
+		return notes.stream().sorted((x,y)->x.getCreationDate().compareTo(y.getCreationDate())).collect(Collectors.toList());
+	}
+
 }

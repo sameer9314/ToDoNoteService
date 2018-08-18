@@ -176,5 +176,21 @@ public interface NoteService {
 	 * 
 	 * @return List<Notes>
 	 */
-	public List<Notes> viewTrash(String token, String noteId);
+	public List<String> viewTrashList(String token, String noteId);
+
+	/**
+	 * To get all notes sorted by name.
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public List<Notes> sortByName(String userId);
+
+	/**
+	 * To get all notes sorted by creation date.
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	public List<Notes> sortByCreatedDate(String userId);
 }

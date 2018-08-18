@@ -11,7 +11,7 @@ import org.springframework.core.io.Resource;
  * @version  1.0
  * @Since  31/07/2018
  */
-@Configuration
+/*@Configuration
 public class ToDoConfig {
      @Bean
       public static PropertySourcesPlaceholderConfigurer propertyConfigurer() {
@@ -42,3 +42,4 @@ public class ToDoConfig {
         return propertySourcesPlaceholderConfigurer;
       }
     }
+*/

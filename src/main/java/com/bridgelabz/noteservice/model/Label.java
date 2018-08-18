@@ -28,6 +28,7 @@ public class Label implements Serializable{
 	public void setId(String id) {
 		this.id = id;
 	}
+	
 	private String labelName;
 	
 	@ApiModelProperty(hidden=true)

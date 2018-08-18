@@ -15,7 +15,7 @@ public class Response {
 
 	private String message;
 	private int status;
-
+	
 	public String getMessage() {
 		return message;
 	}
@@ -36,5 +36,7 @@ public class Response {
 	public String toString() {
 		return "Response [message=" + message + ", status=" + status + "]";
 	}
+
+	
 
 }
